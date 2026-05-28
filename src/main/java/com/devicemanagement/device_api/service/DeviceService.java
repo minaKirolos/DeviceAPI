@@ -30,7 +30,7 @@ public class DeviceService {
     @Transactional
     public DeviceResponse create(CreateDeviceRequest request) {
         Device device = mapper.toEntity(request);
-        return mapper.toResponse(repository.save(device));
+        return mapper.toResponse(repository.saveAndFlush(device)); // flush needed for CreationTimeStamp
     }
 
     @Transactional(readOnly = true)
@@ -52,7 +52,12 @@ public class DeviceService {
     public List<DeviceResponse> getByState(DeviceState state) {
         return repository.findByState(state).stream().map(mapper::toResponse).toList();
     }
-
+    @Transactional(readOnly = true)
+    public List<DeviceResponse> getByBrandAndState(String brand, DeviceState state) {
+        return repository.findByBrandAndState(brand, state).stream()
+                .map(mapper::toResponse)
+                .toList();
+    }
     @Transactional
     public DeviceResponse fullUpdate(UUID id, UpdateDeviceRequest request) {
         Device device = findOrThrow(id);
