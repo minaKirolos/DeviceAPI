@@ -10,12 +10,13 @@ import com.devicemanagement.device_api.exception.DeviceInUseException;
 import com.devicemanagement.device_api.exception.DeviceNotFoundException;
 import com.devicemanagement.device_api.mapper.DeviceMapper;
 import com.devicemanagement.device_api.repository.DeviceRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Pageable;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.List;
 
 @Service
 public class DeviceService {
@@ -37,24 +38,23 @@ public class DeviceService {
     }
 
     @Transactional(readOnly = true)
-    public List<DeviceResponse> getAll() {
-        return repository.findAll().stream().map(DeviceMapper::toResponse).toList();
+    public Page<DeviceResponse> getAll(Pageable pageable) {
+        return repository.findAll(pageable).map(DeviceMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
-    public List<DeviceResponse> getByBrand(String brand) {
-        return repository.findByBrand(brand).stream().map(DeviceMapper::toResponse).toList();
+    public Page<DeviceResponse> getByBrand(String brand, Pageable pageable) {
+        return repository.findByBrand(brand, pageable).map(DeviceMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
-    public List<DeviceResponse> getByState(DeviceState state) {
-        return repository.findByState(state).stream().map(DeviceMapper::toResponse).toList();
+    public Page<DeviceResponse> getByState(DeviceState state, Pageable pageable) {
+        return repository.findByState(state, pageable).map(DeviceMapper::toResponse);
     }
     @Transactional(readOnly = true)
-    public List<DeviceResponse> getByBrandAndState(String brand, DeviceState state) {
-        return repository.findByBrandAndState(brand, state).stream()
-                .map(DeviceMapper::toResponse)
-                .toList();
+    public Page<DeviceResponse> getByBrandAndState(String brand, DeviceState state, Pageable pageable) {
+        return repository.findByBrandAndState(brand, state,pageable)
+                .map(DeviceMapper::toResponse);
     }
     @Transactional
     public DeviceResponse fullUpdate(UUID id, UpdateDeviceRequest request) {

@@ -9,11 +9,14 @@ import com.devicemanagement.device_api.service.DeviceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
 import java.net.URI;
 import java.util.UUID;
 
@@ -40,19 +43,20 @@ public class DeviceController {
     }
     @Operation(summary = "Fetch all devices, optionally filtered by brand and/or state")
     @GetMapping
-    public List<DeviceResponse> getDevices(@RequestParam(required = false) String brand,
-                                           @RequestParam(required = false) DeviceState state) {
-        if (brand != null && state != null)
-        {
-            return service.getByBrandAndState(brand, state);
+    public PagedModel<DeviceResponse> getDevices(@RequestParam(required = false) String brand,
+                                                 @RequestParam(required = false) DeviceState state,
+                                                 @PageableDefault(size = 10) Pageable pageable) {
+        Page<DeviceResponse> page;
+        if (brand != null && state != null) {
+            page = service.getByBrandAndState(brand, state, pageable);
+        } else if (brand != null) {
+            page = service.getByBrand(brand, pageable);
+        } else if (state != null) {
+            page = service.getByState(state, pageable);
+        } else {
+            page = service.getAll(pageable);
         }
-        if (brand != null) {
-            return service.getByBrand(brand);
-        }
-        if (state != null) {
-            return service.getByState(state);
-        }
-        return service.getAll();
+        return new PagedModel<>(page);
     }
     @Operation(summary = "Fully update a device (replaces all fields)")
     @PutMapping("/{id}")
