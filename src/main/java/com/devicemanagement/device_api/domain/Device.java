@@ -24,7 +24,6 @@ public class Device {
     @Column(nullable = false, length = 20)
     private DeviceState state;
 
-    @CreationTimestamp
     @Column(name = "creation_time", nullable = false, updatable = false)
     private Instant creationTime;
 
@@ -36,6 +35,7 @@ public class Device {
         this.name = name;
         this.brand = brand;
         this.state = state;
+        this.creationTime = Instant.now();
     }
 
     public UUID getId() {

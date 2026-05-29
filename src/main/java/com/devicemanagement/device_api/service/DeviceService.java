@@ -20,42 +20,40 @@ import java.util.List;
 @Service
 public class DeviceService {
     private final DeviceRepository repository;
-    private final DeviceMapper mapper;
 
     public DeviceService(DeviceRepository repository, DeviceMapper mapper) {
         this.repository = repository;
-        this.mapper = mapper;
     }
 
     @Transactional
     public DeviceResponse create(CreateDeviceRequest request) {
-        Device device = mapper.toEntity(request);
-        return mapper.toResponse(repository.saveAndFlush(device)); // flush needed for CreationTimeStamp
+        Device device = DeviceMapper.toEntity(request);
+        return DeviceMapper.toResponse( repository.save(device));
     }
 
     @Transactional(readOnly = true)
     public DeviceResponse getById(UUID id) {
-        return mapper.toResponse(findOrThrow(id));
+        return DeviceMapper.toResponse(findOrThrow(id));
     }
 
     @Transactional(readOnly = true)
     public List<DeviceResponse> getAll() {
-        return repository.findAll().stream().map(mapper::toResponse).toList();
+        return repository.findAll().stream().map(DeviceMapper::toResponse).toList();
     }
 
     @Transactional(readOnly = true)
     public List<DeviceResponse> getByBrand(String brand) {
-        return repository.findByBrand(brand).stream().map(mapper::toResponse).toList();
+        return repository.findByBrand(brand).stream().map(DeviceMapper::toResponse).toList();
     }
 
     @Transactional(readOnly = true)
     public List<DeviceResponse> getByState(DeviceState state) {
-        return repository.findByState(state).stream().map(mapper::toResponse).toList();
+        return repository.findByState(state).stream().map(DeviceMapper::toResponse).toList();
     }
     @Transactional(readOnly = true)
     public List<DeviceResponse> getByBrandAndState(String brand, DeviceState state) {
         return repository.findByBrandAndState(brand, state).stream()
-                .map(mapper::toResponse)
+                .map(DeviceMapper::toResponse)
                 .toList();
     }
     @Transactional
@@ -65,7 +63,7 @@ public class DeviceService {
         device.setName(request.name());
         device.setBrand(request.brand());
         device.setState(request.state());
-        return mapper.toResponse(device);
+        return DeviceMapper.toResponse(device);
     }
 
     @Transactional
@@ -88,7 +86,7 @@ public class DeviceService {
         {
             device.setState(request.state());
         }
-        return mapper.toResponse(device);
+        return DeviceMapper.toResponse(device);
     }
 
     @Transactional
