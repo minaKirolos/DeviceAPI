@@ -15,21 +15,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.data.domain.Pageable;
+
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class DeviceService {
     private final DeviceRepository repository;
 
-    public DeviceService(DeviceRepository repository, DeviceMapper mapper) {
+    public DeviceService(DeviceRepository repository) {
         this.repository = repository;
     }
 
     @Transactional
     public DeviceResponse create(CreateDeviceRequest request) {
         Device device = DeviceMapper.toEntity(request);
-        return DeviceMapper.toResponse( repository.save(device));
+        return DeviceMapper.toResponse(repository.save(device));
     }
 
     @Transactional(readOnly = true)
@@ -51,11 +53,13 @@ public class DeviceService {
     public Page<DeviceResponse> getByState(DeviceState state, Pageable pageable) {
         return repository.findByState(state, pageable).map(DeviceMapper::toResponse);
     }
+
     @Transactional(readOnly = true)
     public Page<DeviceResponse> getByBrandAndState(String brand, DeviceState state, Pageable pageable) {
-        return repository.findByBrandAndState(brand, state,pageable)
+        return repository.findByBrandAndState(brand, state, pageable)
                 .map(DeviceMapper::toResponse);
     }
+
     @Transactional
     public DeviceResponse fullUpdate(UUID id, UpdateDeviceRequest request) {
         Device device = findOrThrow(id);
@@ -74,18 +78,15 @@ public class DeviceService {
         String newBrand = request.brand() != null ? request.brand() : device.getBrand();
         guardNameBrandChange(device, newName, newBrand);
 
-        if (request.name() != null)
-        {
-            device.setName(request.name());
-        }
-        if (request.brand() != null)
-        {
-            device.setBrand(request.brand());
-        }
-        if (request.state() != null)
-        {
-            device.setState(request.state());
-        }
+        Optional.ofNullable(request.name())
+                .ifPresent(device::setName);
+
+        Optional.ofNullable(request.brand())
+                .ifPresent(device::setBrand);
+
+        Optional.ofNullable(request.state())
+                .ifPresent(device::setState);
+
         return DeviceMapper.toResponse(device);
     }
 
