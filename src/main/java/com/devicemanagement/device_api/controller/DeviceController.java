@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +46,7 @@ public class DeviceController {
     @GetMapping
     public PagedModel<DeviceResponse> getDevices(@RequestParam(required = false) String brand,
                                                  @RequestParam(required = false) DeviceState state,
-                                                 @PageableDefault(size = 10) Pageable pageable) {
+                                                 @PageableDefault(size = 10, sort = "creationTime", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<DeviceResponse> page;
         if (brand != null && state != null) {
             page = service.getByBrandAndState(brand, state, pageable);
