@@ -3,9 +3,7 @@ package com.devicemanagement.device_api.mapper;
 import com.devicemanagement.device_api.domain.Device;
 import com.devicemanagement.device_api.dto.CreateDeviceRequest;
 import com.devicemanagement.device_api.dto.DeviceResponse;
-import org.springframework.stereotype.Component;
 
-@Component
 public final class DeviceMapper {
 
     private DeviceMapper() {

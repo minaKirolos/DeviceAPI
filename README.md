@@ -210,19 +210,18 @@ device-api/
 ```
 
 ---
+## Test coverage
 
+Code coverage is measured by **JaCoCo**, wired into the `test` phase of the build. Running `./mvnw test` (or `./mvnw verify`) generates an HTML report at `target/site/jacoco/index.html` showing per-package, per-class, and line-by-line coverage. The current run reports **83% instruction and 83% branch coverage** across **15 classes** — with 100% on the `domain`, `dto`, `mapper`, and `config` packages, **85%** on the `service` layer (where the domain rules live), and **73%** on the global exception handler.
 ## Future improvements
 
 Things that are *out of scope* for this submission but would be natural next steps:
 
-- **Mapping** — replace the hand-written `DeviceMapper` with **MapStruct**.
+- **Mapping** — replace the hand-written `DeviceMapper` with **MapStruct** ( depending on the size of the project ).
 - **Observability** — Spring Boot Actuator + Micrometer, structured JSON logging.
 - **Security** — authentication/authorization (Spring Security + JWT or OAuth2).
-- **Optimistic locking** — `@Version` on `Device` to detect concurrent updates.
-- **Richer state-transition rules** — e.g. a state machine instead of free transitions.
 - **Better Swagger UX for `Pageable`** — explicit `page`/`size`/`sort` parameters with documented examples instead of the auto-generated `Pageable` schema.
 - **CI pipeline** — GitHub Actions running `mvnw test` and building the Docker image on every push.
-- **End-to-end test of the compose stack** in CI.
 - **Uniform 500 fallback** — add a final `@ExceptionHandler(Exception.class)` once we're confident it won't swallow framework exceptions.
 
 ---

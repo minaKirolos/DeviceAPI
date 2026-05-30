@@ -1,6 +1,7 @@
 package com.devicemanagement.device_api.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -45,5 +46,12 @@ public class GlobalExceptionHandler {
                 .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
                 .toList();
         return build(HttpStatus.BAD_REQUEST, "Validation failed", request, details);
+    }
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ResponseEntity<ApiError> handleInvalidSortProperty(PropertyReferenceException ex,
+                                                              HttpServletRequest request) {
+        String message = "Unknown sort/filter property '" + ex.getPropertyName()
+                + "'. Allowed: id, name, brand, state, creationTime.";
+        return build(HttpStatus.BAD_REQUEST, message, request, List.of());
     }
 }
