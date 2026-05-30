@@ -120,7 +120,7 @@ Default page size is **10**; default sort is `creationTime DESC`.
 
 ## Domain rules (enforced server-side)
 
-1. **Creation time is immutable.** It's set once on insert by `@CreationTimestamp` and the column is `updatable = false`. No setter is exposed.
+1. **Creation time is immutable.** It's set once on insert by the constructor. No setter is exposed.
 2. **Name and brand cannot be updated while a device is `IN_USE`.** Attempting to change either field while in use returns **409 Conflict**. Changing only `state` (e.g. releasing the device) is allowed.
 3. **`IN_USE` devices cannot be deleted.** Attempting to delete returns **409 Conflict**.
 

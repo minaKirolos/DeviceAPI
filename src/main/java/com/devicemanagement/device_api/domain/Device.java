@@ -1,7 +1,6 @@
 package com.devicemanagement.device_api.domain;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 import java.util.UUID;
